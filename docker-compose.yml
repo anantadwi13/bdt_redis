@@ -1,0 +1,91 @@
+version: '3.7'
+
+services: 
+  redis_master:
+    image: redis
+    environment: 
+      - MASTER=1
+      - IP=10.1.17.29
+      - PORT=6379
+      - CLUSTER_NAME=redis-cluster
+      - QUORUM=2
+      - PORT_SENTINEL=26379
+    volumes: 
+      - redis_master:/data
+      - ./redis/:/root/
+      - ./log/master:/var/log/redis
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    ports: 
+      - "6379:6379"
+    networks: 
+      bdt_network:
+        ipv4_address: 10.1.17.29
+    command: /bin/bash -c "cd /root/config; /bin/bash ./init.sh; tail -f /dev/null"
+
+  redis_slave_1:
+    image: redis
+    environment: 
+      - MASTER=0
+      - MASTER_IP=10.1.17.29
+      - MASTER_PORT=6379
+      - CLUSTER_NAME=redis-cluster
+      - QUORUM=2
+      - IP=10.1.17.30
+      - PORT=6379
+      - PORT_SENTINEL=26379
+    volumes: 
+      - redis_slave_1:/data
+      - ./redis/:/root/
+      - ./log/slave_1:/var/log/redis
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    ports: 
+      - "6380:6379"
+    networks: 
+      bdt_network:
+        ipv4_address: 10.1.17.30
+    command: /bin/bash -c "cd /root/config; /bin/bash ./init.sh; tail -f /dev/null"
+
+  redis_slave_2:
+    image: redis
+    environment: 
+      - MASTER=0
+      - MASTER_IP=10.1.17.29
+      - MASTER_PORT=6379
+      - CLUSTER_NAME=redis-cluster
+      - QUORUM=2
+      - IP=10.1.17.31
+      - PORT=6379
+      - PORT_SENTINEL=26379
+    volumes: 
+      - redis_slave_2:/data
+      - ./redis/:/root/
+      - ./log/slave_2:/var/log/redis
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    ports: 
+      - "6381:6379"
+    networks: 
+      bdt_network:
+        ipv4_address: 10.1.17.31
+    command: /bin/bash -c "cd /root/config; /bin/bash ./init.sh; tail -f /dev/null"
+
+volumes: 
+  redis_master: {}
+  redis_slave_1: {}
+  redis_slave_2: {}
+
+networks:
+  bdt_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.1.17.0/24
