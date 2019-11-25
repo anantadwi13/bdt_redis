@@ -7,7 +7,8 @@ cp ./sentinel.conf /etc/sentinel.conf
 mkdir -p /var/log/redis
 
 # Setting up redis & sentinel
-sed -i "s/.*bind 127.0.0.1.*/bind ${IP}/" /etc/redis.conf
+sed -i "s/.*bind 127.0.0.1.*/bind 127.0.0.1 ${IP}/" /etc/redis.conf
+sed -i "s/.*# bind 127.0.0.1 192.168.1.1.*/bind 127.0.0.1 ${IP}/" /etc/sentinel.conf
 sed -i "s/.*port 6379.*/port ${PORT}/" /etc/redis.conf
 
 if ! [ ${MASTER} -eq 1 ]; then 

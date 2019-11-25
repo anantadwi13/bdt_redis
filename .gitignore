@@ -1,2 +1,4 @@
 log/
 redis/.*
+wordpress/root/.*
+wordpress/log
